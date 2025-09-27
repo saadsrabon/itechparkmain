@@ -1,0 +1,70 @@
+name: CI/CD Deploy Monorepo
+
+on:
+  push:
+    branches:
+      - main  # trigger on push to main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Setup Node.js
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22.12.0'
+
+      # 3. Build main frontend
+      - name: Build main frontend
+        working-directory: ./itech-frontend-main   # adjust to your folder
+        run: |
+          npm install
+          npm run build
+
+      # 4. Build admin frontend
+      - name: Build admin frontend
+        working-directory: ./dashboard-frontend
+        run: |
+          npm install
+          npm run build
+
+      # 5. Deploy main frontend via rsync
+      - name: Deploy main frontend
+        uses: burnett01/rsync-deployments@6.0
+        with:
+          switches: -avzr --delete
+          path: ./itech-frontend-main/dist/
+          remote_path: /var/www/itechpark.co/main/dist/
+          remote_host: ${{ secrets.SERVER_IP }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      # 6. Deploy admin frontend via rsync
+      - name: Deploy admin frontend
+        uses: burnett01/rsync-deployments@6.0
+        with:
+          switches: -avzr --delete
+          path: ./dashboard-frontend/dist/
+          remote_path: /var/www/itechpark.co/admin/dist/
+          remote_host: ${{ secrets.SERVER_IP }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      # 7. Deploy backend via SSH
+      - name: Deploy backend
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /var/www/itechpark.co/api
+            git pull origin main
+            npm install
+            pm2 restart api
