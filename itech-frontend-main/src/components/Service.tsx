@@ -48,7 +48,7 @@ const TextNavigationSlider: React.FC = () => {
   useEffect(() => {
     const fetchServicesData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/sections/services");
+        const response = await fetch("https://api.itechpark.co/api/sections/services");
         const result = await response.json();
         if (result.success) {
           const servicesData = result.data;

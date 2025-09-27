@@ -26,7 +26,7 @@ const Header: React.FC = () => {
   useEffect(() => {
     const fetchHeroData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/sections/hero");
+        const response = await fetch("https://api.itechpark.co/api/sections/hero");
         const result = await response.json();
         if (result.success) {
           setData(result.data);

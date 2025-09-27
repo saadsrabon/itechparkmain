@@ -39,7 +39,7 @@ const Aboutus: React.FC = () => {
     const fetchAboutData = async () => {
       try {
         console.log("Fetching about data...");
-        const response = await fetch("http://localhost:5000/api/sections/about");
+        const response = await fetch("https://api.itechpark.co/api/sections/about");
         const result = await response.json();
         console.log("About API Response:", result);
         if (result.success && result.data.length > 0) {

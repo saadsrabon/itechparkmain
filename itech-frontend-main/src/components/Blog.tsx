@@ -28,7 +28,7 @@ const Blog: React.FC = () => {
     const fetchBlogsData = async () => {
       try {
         console.log("Fetching blogs data...");
-        const response = await fetch("http://localhost:5000/api/sections/blogs");
+        const response = await fetch("https://api.itechpark.co/api/sections/blogs");
         const result = await response.json();
         console.log("Blogs API Response:", result);
         if (result.success) {

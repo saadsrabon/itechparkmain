@@ -27,7 +27,7 @@ const Teammember: React.FC = () => {
   useEffect(() => {
     const fetchTeamData = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/sections/team-members");
+        const response = await fetch("https://api.itechpark.co/api/sections/team-members");
         const result = await response.json();
         if (result.success) {
           const teamData = result.data;

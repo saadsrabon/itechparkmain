@@ -1,4 +1,5 @@
-import { FormEvent, useState } from 'react'
+import { useState } from 'react'
+import type { FormEvent } from 'react'
 import { useAuth } from '../auth/AuthContext'
 import { Navigate, useNavigate } from 'react-router-dom'
 

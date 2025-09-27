@@ -22,7 +22,7 @@ const Successsection: React.FC = () => {
   useEffect(() => {
     const fetchSuccessStories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/sections/success");
+        const response = await fetch("https://api.itechpark.co/api/sections/success");
         const result = await response.json();
         if (result.success) {
           setSuccessStories(result.data);
