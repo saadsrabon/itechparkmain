@@ -1,0 +1,25 @@
+:root {
+  --bg: #0b0f1a;
+  --panel: #0f172a;
+  --muted: #94a3b8;
+  --text: #e5e7eb;
+  --border: #1f2937;
+  --primary: #0ea5e9; /* user-preferred sky blue */
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+a { color: inherit; text-decoration: none; }
+
+
+
+
+
+
