@@ -3,7 +3,7 @@ name: CI/CD Deploy Monorepo
 on:
   push:
     branches:
-      - main  # trigger on push to main branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -12,59 +12,74 @@ jobs:
     steps:
       # 1. Checkout repo
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # 2. Setup Node.js
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '22.12.0'
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: |
+            itech-frontend-main/package-lock.json
+            dashboard-frontend/package-lock.json
+            ItechParkBackend/package-lock.json
 
       # 3. Build main frontend
       - name: Build main frontend
-        working-directory: ./itech-frontend-main   # adjust to your folder
+        working-directory: ./itech-frontend-main
         run: |
-          npm install
+          npm ci
           npm run build
 
       # 4. Build admin frontend
       - name: Build admin frontend
         working-directory: ./dashboard-frontend
         run: |
-          npm install
+          npm ci
           npm run build
 
-      # 5. Deploy main frontend via rsync
+      # 5. Deploy main frontend
       - name: Deploy main frontend
-        uses: burnett01/rsync-deployments@6.0
+        uses: burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --delete
           path: ./itech-frontend-main/dist/
-          remote_path: /var/www/itechpark.co/main/dist/
+          remote_path: /var/www/itechpark.co/main/
           remote_host: ${{ secrets.SERVER_IP }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
 
-      # 6. Deploy admin frontend via rsync
+      # 6. Deploy admin frontend
       - name: Deploy admin frontend
-        uses: burnett01/rsync-deployments@6.0
+        uses: burnett01/rsync-deployments@6.0.0
         with:
           switches: -avzr --delete
           path: ./dashboard-frontend/dist/
-          remote_path: /var/www/itechpark.co/admin/dist/
+          remote_path: /var/www/itechpark.co/admin/
           remote_host: ${{ secrets.SERVER_IP }}
           remote_user: ${{ secrets.SERVER_USER }}
           remote_key: ${{ secrets.SERVER_SSH_KEY }}
 
-      # 7. Deploy backend via SSH
+      # 7. Deploy backend
       - name: Deploy backend
-        uses: appleboy/ssh-action@master
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avzr --delete
+          path: ./ItechParkBackend/
+          remote_path: /var/www/itechpark.co/api/
+          remote_host: ${{ secrets.SERVER_IP }}
+          remote_user: ${{ secrets.SERVER_USER }}
+          remote_key: ${{ secrets.SERVER_SSH_KEY }}
+
+      # 8. Restart backend with PM2
+      - name: Restart backend
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /var/www/itechpark.co/api
-            git pull origin main
-            npm install
-            pm2 restart api
+            npm ci --production
+            pm2 restart api || pm2 start server.js --name api
