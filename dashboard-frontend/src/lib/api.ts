@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 // Auth endpoints
 export const authApi = {
   login: (payload: { email: string; password: string }) => api.post('/auth/login', payload),
-  me: () => api.get('/auth/me'),
+  me: () => api.get('/api/auth/me'),
   logout: () => api.post('/auth/logout')
 }
 
