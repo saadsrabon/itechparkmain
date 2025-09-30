@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.itechpark.co'
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api.itechpark.co/api'
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 // Auth endpoints
 export const authApi = {
   login: (payload: { email: string; password: string }) => api.post('/api/auth/login', payload),
-  me: () => api.get('/api/auth/me'),
+  me: () => api.get('/auth/me'),
   logout: () => api.post('/auth/logout')
 }
 
