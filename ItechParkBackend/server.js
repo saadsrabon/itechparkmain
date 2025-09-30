@@ -12,33 +12,7 @@ app.use(helmet());
 app.use(morgan('combined'));
 
 
-// CORS configuration
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     if (!origin) return callback(null, true);
-    
-//     const allowedOrigins = [
-//       'https://itechpark.co',
-//       'https://www.itechpark.co', 
-//       'https://admin.itechpark.co',
-//       'http://localhost:3000',
-//       'http://localhost:5173',
-//       'http://localhost:4173'
-//     ];
-    
-//     if (allowedOrigins.indexOf(origin) !== -1) {
-//       callback(null, true);
-//     } else {
-//       console.log('CORS blocked origin:', origin);
-//       callback(new Error('Not allowed by CORS'));
-//     }
-//   },
-//   credentials: true,
-//   optionsSuccessStatus: 200,
-//   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
-// };
+
 
 
 app.use(cors({
